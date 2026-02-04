@@ -18,10 +18,10 @@ from pathlib import Path
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from core.model_interface import HuggingFaceSentimentModel
-from core.test_infrastructure import TestRunner, TestCase, TestScenario, ThreatCategory, Severity
-from scenarios.behavioral_subversion import create_prompt_injection_scenario
-from scenarios.capability_failure import (
+from model_interface import HuggingFaceSentimentModel
+from test_infrastructure import TestRunner, TestCase, TestScenario, ThreatCategory, Severity
+from behavioral_subversion import create_prompt_injection_scenario
+from capability_failure import (
     create_typo_robustness_scenario,
     create_semantic_edge_cases_scenario
 )

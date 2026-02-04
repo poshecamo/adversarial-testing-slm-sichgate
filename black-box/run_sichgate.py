@@ -17,10 +17,10 @@ from datetime import datetime
 # Add parent directory to path so we can import our modules
 sys.path.insert(0, str(Path(__file__).parent))
 
-from core.model_interface import HuggingFaceSentimentModel
-from core.test_infrastructure import TestRunner, ThreatCategory
-from scenarios.behavioral_subversion import get_all_behavioral_scenarios
-from scenarios.capability_failure import get_all_capability_scenarios
+from model_interface import HuggingFaceSentimentModel
+from test_infrastructure import TestRunner, ThreatCategory
+from behavioral_subversion import get_all_behavioral_scenarios
+from capability_failure import get_all_capability_scenarios
 
 
 def print_banner():

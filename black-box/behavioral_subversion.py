@@ -10,7 +10,7 @@
 # Threat Category: Behavioral Subversion
 
 
-from core.test_infrastructure import (
+from test_infrastructure import (
     TestCase, TestScenario, ThreatCategory, Severity
 )
 
