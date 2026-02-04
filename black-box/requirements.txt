@@ -1,0 +1,19 @@
+# SichGate Dependencies
+# Install with: pip install -r requirements.txt
+
+# Core ML libraries
+torch>=2.0.0
+transformers>=4.30.0
+
+# Utilities
+tqdm>=4.65.0
+
+# Data handling  
+numpy>=1.24.0
+
+# Optional: For future API model support
+# requests>=2.31.0
+
+# Development dependencies (optional)
+# pytest>=7.3.0  # For running tests
+# black>=23.0.0  # For code formatting
