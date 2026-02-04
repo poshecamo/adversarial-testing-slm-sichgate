@@ -1,12 +1,23 @@
 #!/usr/bin/env python3
+"""
+SichGate - AI Security Testing Framework
+Main Runner Script
 
-# Usage:
-#     python run_sichgate.py                    # Run all tests with default model
-#     python run_sichgate.py --scenarios all    # Explicit: run everything
-#     python run_sichgate.py --scenarios behavioral  # Run only behavioral tests
-#     python run_sichgate.py --model {name    # Test specific model
-#     python run_sichgate.py --output results/  # Specify output directory
+This is the primary entry point for running SichGate security tests.
+It orchestrates model loading, test execution, and report generation.
 
+Usage:
+    python run_sichgate.py                    # Run all tests with default model
+    python run_sichgate.py --scenarios all    # Explicit: run everything
+    python run_sichgate.py --scenarios behavioral  # Run only behavioral tests
+    python run_sichgate.py --model <name>     # Test specific model
+    python run_sichgate.py --output results/  # Specify output directory
+
+Design Philosophy:
+The runner should be simple and opinionated. We make good default choices
+so users can get started with zero configuration, but we provide options
+for customization when needed.
+"""
 
 import argparse
 import json
@@ -21,9 +32,11 @@ from model_interface import HuggingFaceSentimentModel
 from test_infrastructure import TestRunner, ThreatCategory
 from behavioral_subversion import get_all_behavioral_scenarios
 from capability_failure import get_all_capability_scenarios
+from information_disclosure import get_all_information_disclosure_scenarios
 
 
 def print_banner():
+    """Display SichGate banner"""
     banner = """
 ╔═══════════════════════════════════════════════════════════════╗
 ║                                                               ║
@@ -55,6 +68,7 @@ Contact: support@sichgate.com
 
 
 def parse_arguments():
+    """Parse command line arguments"""
     parser = argparse.ArgumentParser(
         description='SichGate AI Security Testing Framework',
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -85,7 +99,7 @@ Scenarios:
         '--scenarios',
         type=str,
         default='all',
-        choices=['all', 'behavioral', 'capability'],
+        choices=['all', 'behavioral', 'capability', 'information'],
         help='Which test scenarios to run (default: all)'
     )
     
@@ -120,6 +134,9 @@ def load_scenarios(scenario_choice: str):
     
     if scenario_choice in ['all', 'capability']:
         scenarios.extend(get_all_capability_scenarios())
+    
+    if scenario_choice in ['all', 'information']:
+        scenarios.extend(get_all_information_disclosure_scenarios())
     
     return scenarios
 
