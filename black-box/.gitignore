@@ -24,6 +24,7 @@ wheels/
 venv/
 env/
 ENV/
+.venv/
 
 # IDE
 .vscode/
@@ -36,6 +37,10 @@ ENV/
 # SichGate specific
 results/
 *.log
+
+# HuggingFace cache directories (downloaded automatically)
+.hf_cache/
+.cache/
 
 # Model cache (HuggingFace downloads these automatically)
 # Uncomment if you want to cache models in the repo

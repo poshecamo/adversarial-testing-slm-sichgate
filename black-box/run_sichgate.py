@@ -22,17 +22,43 @@ for customization when needed.
 import argparse
 import json
 import sys
+import os
 from pathlib import Path
 from datetime import datetime
 
 # Add parent directory to path so we can import our modules
 sys.path.insert(0, str(Path(__file__).parent))
 
+# Configure HuggingFace cache for better compatibility
+# This prevents permission errors on first run by using a local cache directory
+# if the default cache is not accessible
+def _setup_huggingface_cache():
+    """Setup HuggingFace cache to avoid permission errors"""
+    if 'HF_HOME' not in os.environ:
+        # Try to use default cache first
+        default_cache = Path.home() / '.cache' / 'huggingface'
+        
+        try:
+            # Check if we have write permissions
+            default_cache.mkdir(parents=True, exist_ok=True)
+            test_file = default_cache / '.write_test'
+            test_file.touch()
+            test_file.unlink()
+            # Permission check passed, use default cache
+            os.environ['HF_HOME'] = str(default_cache)
+        except (PermissionError, OSError):
+            # Fallback to local cache directory if default is not writable
+            local_cache = Path(__file__).parent / '.hf_cache'
+            local_cache.mkdir(exist_ok=True)
+            os.environ['HF_HOME'] = str(local_cache)
+            print(f"ℹ️  Using local HuggingFace cache: {local_cache}")
+
+_setup_huggingface_cache()
+
 from model_interface import HuggingFaceSentimentModel
 from test_infrastructure import TestRunner, ThreatCategory
 from behavioral_subversion import get_all_behavioral_scenarios
 from capability_failure import get_all_capability_scenarios
-from information_disclosure import get_all_information_disclosure_scenarios
 
 
 def print_banner():
@@ -61,7 +87,7 @@ This is the free open-source version. SichGate Pro includes:
   • Support for custom models and multi-modal inputs
   
 Learn more: https://sichgate.com
-Contact: support@sichgate.com
+Contact: sales@sichgate.com
 
 """
     print(banner)
@@ -99,7 +125,7 @@ Scenarios:
         '--scenarios',
         type=str,
         default='all',
-        choices=['all', 'behavioral', 'capability', 'information'],
+        choices=['all', 'behavioral', 'capability'],
         help='Which test scenarios to run (default: all)'
     )
     
@@ -134,9 +160,6 @@ def load_scenarios(scenario_choice: str):
     
     if scenario_choice in ['all', 'capability']:
         scenarios.extend(get_all_capability_scenarios())
-    
-    if scenario_choice in ['all', 'information']:
-        scenarios.extend(get_all_information_disclosure_scenarios())
     
     return scenarios
 
@@ -383,3 +406,8 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+#     TODO:  Question-answering models (different eval criteria)
+#  Summarization models (need different tests)
+# Translation models (need different tests)
+# Image-text models (need multimodal test cases)
