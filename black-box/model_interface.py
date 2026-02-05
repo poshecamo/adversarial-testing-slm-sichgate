@@ -1,12 +1,13 @@
+"""
+Model Interface Layer for SichGate Testing Framework
 
-# Model Interface Layer for SichGate Testing Framework
+This module provides a unified interface for interacting with different types of models:
+- HuggingFace models (sentiment, classification, etc.)
+- Local PyTorch models
+- API endpoints (future: OpenAI, Anthropic, custom APIs)
 
-# This module provides a unified interface for interacting with different types of models:
-# - HuggingFace models (sentiment, classification, etc.)
-# - Local PyTorch models
-# - API endpoints (future: OpenAI, Anthropic, custom APIs)
-
-# The abstraction allows test cases to be written once and run against any model type.
+The abstraction allows test cases to be written once and run against any model type.
+"""
 
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
@@ -17,15 +18,32 @@ import json
 
 
 class ModelInterface(ABC):
+    """
+    Abstract base class defining the interface all model wrappers must implement.
+    
+    This ensures that regardless of how a model is hosted or accessed, the testing
+    framework can interact with it consistently.
+    """
+    
     def __init__(self):
         self.query_count = 0
         self.total_latency = 0.0
         
     @abstractmethod
     def predict(self, text: str) -> Dict[str, Any]:
+        """
+        Make a prediction on the input text.
+        
+        Returns:
+            Dict containing:
+                - 'label': str (the predicted class label)
+                - 'confidence': float (confidence score 0-1)
+                - 'raw_output': Any (model-specific raw output for debugging)
+        """
         pass
     
     def get_stats(self) -> Dict[str, Any]:
+        """Return statistics about model usage during testing."""
         avg_latency = self.total_latency / self.query_count if self.query_count > 0 else 0
         return {
             'total_queries': self.query_count,
@@ -67,6 +85,15 @@ class HuggingFaceSentimentModel(ModelInterface):
         print(f"Model loaded successfully. Label mapping: {self.label_map}")
     
     def predict(self, text: str) -> Dict[str, Any]:
+        """
+        Run sentiment prediction on input text.
+        
+        Technical details:
+        - Tokenization converts text to input IDs the model understands
+        - truncation=True handles texts longer than model's max length
+        - torch.no_grad() disables gradient computation (we're not training)
+        - softmax converts raw logits to probabilities
+        """
         start_time = time.time()
         
         # Tokenize the input
@@ -110,6 +137,12 @@ class HuggingFaceSentimentModel(ModelInterface):
         }
     
     def predict_batch(self, texts: list) -> list:
+        """
+        Batch prediction for efficiency when running many tests.
+        
+        This is significantly faster than calling predict() in a loop because
+        the model can process multiple inputs in parallel on GPU.
+        """
         start_time = time.time()
         
         # Tokenize all texts at once
@@ -151,6 +184,12 @@ class HuggingFaceSentimentModel(ModelInterface):
 
 
 class LocalPyTorchModel(ModelInterface):
+    """
+    Wrapper for custom local PyTorch models.
+    
+    This is for users who have trained their own models and want to test them.
+    They need to provide the model file and a prediction function.
+    """
     
     def __init__(self, model_path: str, preprocessing_fn=None, label_map=None):
         super().__init__()
@@ -163,6 +202,7 @@ class LocalPyTorchModel(ModelInterface):
         self.model.eval()
     
     def predict(self, text: str) -> Dict[str, Any]:
+        """Custom prediction logic for local models."""
         start_time = time.time()
         
         # Apply user-provided preprocessing
@@ -197,6 +237,14 @@ class LocalPyTorchModel(ModelInterface):
 
 
 class APIModel(ModelInterface):
+    """
+    Wrapper for API-based models (OpenAI, Anthropic, custom endpoints).
+    
+    This is a placeholder for future functionality. The key design choice here
+    is that we maintain the same interface as local models, but handle API
+    rate limiting, retries, and error handling transparently.
+    """
+    
     def __init__(self, api_endpoint: str, api_key: Optional[str] = None):
         super().__init__()
         self.api_endpoint = api_endpoint
@@ -210,6 +258,7 @@ class APIModel(ModelInterface):
         # - Error handling
         
     def predict(self, text: str) -> Dict[str, Any]:
+        """Make API request and parse response."""
         raise NotImplementedError(
             "API model support is coming in SichGate Pro. "
             "For early access, contact us at support@sichgate.com"
