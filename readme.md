@@ -114,7 +114,7 @@ Comprehensive reporting includes detailed remediation guidance for each vulnerab
 
 Multi-modal support extends testing beyond text to include images, audio, video, and documents. Custom model support includes APIs for proprietary models, local models with custom architectures, and fine-tuned models with specialized evaluation needs. Priority support provides direct access to security researchers, custom test development for your specific use cases, and incident response assistance for security events.
 
-For more information about SichGate Pro, visit our website at https://sichgate.com or contact our sales team at sales@sichgate.com.
+For more information about SichGate Pro, visit our website at https://sichgate.com.
 
 Contributing
 
@@ -134,8 +134,6 @@ The framework uses HuggingFace Transformers for model loading and inference, PyT
 
 Support
 
-For questions about the open-source edition, please open an issue on GitHub. For SichGate Pro inquiries, contact support{at}sichgate.com. For security vulnerabilities in SichGate itself, please report responsibly to support{at}sichgate.com.
+For questions about the open-source edition, please open an issue on GitHub. For SichGate Pro inquiries, contact support at sichgate.com.
 
-Built with love for the AI/ML security community
 
-Testing AI systems so humans can trust them
