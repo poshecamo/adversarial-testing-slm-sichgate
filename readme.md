@@ -134,7 +134,7 @@ The framework uses HuggingFace Transformers for model loading and inference, PyT
 
 Support
 
-For questions about the open-source edition, please open an issue on GitHub. For SichGate Pro inquiries, contact support@sichgate.com. For security vulnerabilities in SichGate itself, please report responsibly to support@sichgate.com.
+For questions about the open-source edition, please open an issue on GitHub. For SichGate Pro inquiries, contact support{at}sichgate.com. For security vulnerabilities in SichGate itself, please report responsibly to support{at}sichgate.com.
 
 Built with love for the AI/ML security community
 
